@@ -15,11 +15,17 @@ namespace management.Controllers
             _personService = personService;
         }
 
-        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int pageNumber, int pageSize, string SearchString)
         {
+            pageSize = 10;
+            pageNumber = 1;
             // Fetch all persons
             var persons = await _personService.GetAllPersonsAsync();
 
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                persons = persons.Where(x => x.id_number.Contains(SearchString)).ToList();
+            }
             // Apply pagination
             var paginatedPersons = persons
                 .Skip((pageNumber - 1) * pageSize)
@@ -32,6 +38,12 @@ namespace management.Controllers
             ViewBag.TotalItems = persons.Count();
 
             return View(paginatedPersons);
+        }
+
+        // Controller Action to Display Modal Popup
+        public ActionResult ShowModal()
+        {
+            return View();
         }
 
         public IActionResult Create()
