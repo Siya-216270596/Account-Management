@@ -1,0 +1,53 @@
+﻿@model List<Person>
+
+@{
+    ViewData["Title"] = "Persons List";
+}
+
+<h2>Persons </h2>
+<br/>
+<h5>Person Management is the process of efficiently handling and organizing individual information.
+    It involves tasks such as adding, editing, viewing,
+    and deleting records while ensuring data accuracy and accessibility.
+    It’s commonly used in systems like employee databases, customer directories,
+    or membership tracking tools</h5>
+<br/>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Person</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID Number</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var person in Model)
+        {
+            <tr>
+                <td>@person.id_number</td>
+                <td>@person.Name</td>
+                <td>@person.Surname</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@person.Code" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@person.Code" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div>
+    @if (ViewBag.PageNumber > 1)
+    {
+        <a href="?pageNumber=@(ViewBag.PageNumber - 1)">Previous</a>
+    }
+    Page @ViewBag.PageNumber
+    @if ((ViewBag.PageNumber * ViewBag.PageSize) < ViewBag.TotalItems)
+    {
+        <a href="?pageNumber=@(ViewBag.PageNumber + 1)">Next</a>
+    }
+</div>
