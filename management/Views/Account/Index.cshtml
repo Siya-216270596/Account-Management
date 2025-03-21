@@ -23,13 +23,11 @@
             @foreach (var account in Model)
             {
                 <tr>
-                    <td>@account.AccountNumber</td>
-                    <td>@account.Balance.ToString("C")</td>
-                    <td>@(account.IsClosed ? "Closed" : "Active")</td>
+                    <td>@account.account_number</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@account.Code" class="btn btn-warning">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@account.Code" class="btn btn-danger">Delete</a>
-                        <a asp-controller="Transactions" asp-action="Index" asp-route-accountId="@account.Code" class="btn btn-info">View Transactions</a>
+                        <a asp-action="Edit" asp-route-id="@account.code" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@account.code" class="btn btn-danger">Delete</a>
+                        <a asp-controller="Transactions" asp-action="Index" asp-route-accountId="@account.code" class="btn btn-info">View Transactions</a>
                     </td>
                 </tr>
             }

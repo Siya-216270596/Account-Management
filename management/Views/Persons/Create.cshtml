@@ -1,29 +1,34 @@
 ﻿@model Person
 
-@{
-    ViewData["Title"] = "Create Person";
-}
-
-<h2>Create Person</h2>
-
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="id_number" class="control-label"></label>
-        <input asp-for="id_number" class="form-control" />
-        <span asp-validation-for="id_number" class="text-danger"></span>
+<div class="modal fade" id="Create" tabindex="-1" aria-labelledby="CreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateModalLabel">Add New Person's Details</h5>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create">
+                    <div class="form-group">
+                        <label asp-for="id_number" class="control-label"></label>
+                        <input asp-for="id_number" class="form-control" />
+                        <span asp-validation-for="id_number" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Surname" class="control-label"></label>
+                        <input asp-for="Surname" class="form-control" />
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Surname" class="control-label"></label>
-        <input asp-for="Surname" class="form-control" />
-        <span asp-validation-for="Surname" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+</div>
