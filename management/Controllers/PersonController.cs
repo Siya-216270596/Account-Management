@@ -9,18 +9,22 @@ namespace management.Controllers
     public class PersonsController : Controller
     {
         private readonly IPersonService _personService;
+        private readonly IAccountService _accountService;
 
-        public PersonsController(IPersonService personService)
+        public PersonsController(IPersonService personService, IAccountService accountService)
         {
             _personService = personService;
+            _accountService = accountService;
         }
 
         public async Task<IActionResult> Index(int pageNumber, int pageSize, string SearchString)
         {
-            pageSize = 10;
+            pageSize = 1000;
             pageNumber = 1;
             // Fetch all persons
             var persons = await _personService.GetAllPersonsAsync();
+
+            
 
             if (!String.IsNullOrEmpty(SearchString))
             {
@@ -40,31 +44,18 @@ namespace management.Controllers
             return View(paginatedPersons);
         }
 
-        // Controller Action to Display Modal Popup
-        public ActionResult ShowModal()
-        {
-            return View();
-        }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create(Person person)
         {
-            if (ModelState.IsValid)
-            {
-                await _personService.AddPersonAsync(person);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(person);
+
+            await _personService.AddPersonAsync(person);
+               return RedirectToAction(nameof(Index));
+
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var person = await _personService.GetPersonByIdAsync(id);
+            var person = await _personService.GetPersonByIdAsync(id); 
             if (person == null) return NotFound();
             return View(person);
         }
@@ -72,12 +63,8 @@ namespace management.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Person person)
         {
-            if (ModelState.IsValid)
-            {
-                await _personService.UpdatePersonAsync(person);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(person);
+               await _personService.UpdatePersonAsync(person);
+               return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Delete(int id)

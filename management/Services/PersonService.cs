@@ -1,27 +1,61 @@
 ﻿using management.Interface;
 using management.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace management.Services
 {
     public class PersonService : IPersonService
     {
         private readonly AppDbContext _context;
+        private readonly IAccountService _accountService;
+        private readonly ITransactionService _transactionService;
 
-        public PersonService(AppDbContext context)
+
+        public PersonService(AppDbContext context, IAccountService accountService, ITransactionService transactionService)
         {
             _context = context;
+            _accountService = accountService;
+            _transactionService = transactionService;
         }
 
         public async Task<Person> GetPersonByIdAsync(int id)
         {
-            return await _context.Persons.FindAsync(id);
+            var accountperson = await _accountService.GetAccountByIdAsync(id);
+            var result =  await _context.Persons.FindAsync(accountperson.PersonCode);
+             
+            return result;
         }
 
-        public async Task<List<Person>> GetAllPersonsAsync()
+        public async Task<IEnumerable<Person>> GetAllPersonsAsync()
         {
-            return await _context.Persons.ToListAsync(); // Fetch all persons from the database
+            try {
+           
+            // Fetch all persons from the database
+            var persons = await _context.Persons.ToListAsync();
+
+            // Gather all person codes
+            var personCodes = persons.Select(p => p.Code).ToList();
+
+            // Fetch all accounts for the persons in a single query
+            var accounts = await _context.Accounts.ToListAsync();
+
+                // Map accounts to their respective persons
+                foreach (var person in persons)
+                {
+                    person.Account = accounts.Where(a => a.PersonCode == person.Code).ToList();
+                }
+
+                // Return the list of persons with their accounts
+                return persons;
+            }
+            catch (Exception ex) {
+
+                throw;
+            }
         }
+
+
 
         public async Task AddPersonAsync(Person person)
         {
@@ -33,16 +67,19 @@ namespace management.Services
 
         public async Task UpdatePersonAsync(Person person)
         {
-            _context.Persons.Update(person);
+            foreach (var account in person.Account)
+            {
+                await _accountService.UpdateAccountAsync(account);
+                _context.Persons.Update(person);
+            }
             await _context.SaveChangesAsync();
         }
 
         public async Task DeletePersonAsync(int id)
         {
             var person = await _context.Persons.FindAsync(id);
-            if (person != null)
+            if (person is not null)
             {
-                _context.Persons.Remove(person);
                 await _context.SaveChangesAsync();
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using management.Models.Response;
+using System.ComponentModel.DataAnnotations;
 
 namespace management.Models
 {
@@ -6,11 +7,12 @@ namespace management.Models
     {
         [Required]
         public int Code { get; set; }
-        [Required]
-        public string id_number { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Surname { get; set; }
+
+        public string? id_number { get; set; }
+
+        public string? Name { get; set; }
+
+        public string? Surname { get; set; }
+        public IEnumerable<Account>? Account { get; set; }
     }
 }
