@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using management.Models;
 using management.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace management.Controllers
 {
@@ -47,14 +48,47 @@ namespace management.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Person person)
         {
-
+            try
+            { 
             await _personService.AddPersonAsync(person);
-               return RedirectToAction(nameof(Index));
+                return Json(new { success = true, message="New Person added successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount(Account account)
+        {
+            try
+            {
+                await _accountService.AddAccountAsync(account);
+                return Json(new { success = true, message = "New Account added successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
         }
 
         public async Task<IActionResult> Edit(int id)
         {
+
             var person = await _personService.GetPersonByIdAsync(id); 
             if (person == null) return NotFound();
             return View(person);
@@ -63,8 +97,22 @@ namespace management.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Person person)
         {
+            try 
+            { 
                await _personService.UpdatePersonAsync(person);
-               return RedirectToAction("Index");
+            return Json(new { success = true, message = "Upadeted successfully" });
+        }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message
+    });
+            }
+            catch (Exception)
+            {
+    // Handle other exceptions
+    return Json(new { success = false, message = "An unexpected error occurred." });
+}
         }
 
         public async Task<IActionResult> Delete(int id)

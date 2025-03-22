@@ -32,8 +32,7 @@ namespace management.Services
         public async Task AddAccountAsync(Account account)
         {
             if (await _context.Accounts.AnyAsync(a => a.account_number == account.account_number))
-                throw new Exception("Duplicate account number is not allowed.");
-
+                throw new InvalidOperationException("Duplicate account number is not allowed.");
             await _context.Accounts.AddAsync(account);
             await _context.SaveChangesAsync();
         }

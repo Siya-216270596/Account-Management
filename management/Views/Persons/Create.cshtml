@@ -5,9 +5,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="CreateModalLabel">Add New Person's Details</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form asp-action="Create">
+                <div id="successAlert-@Model.Code" class="alert alert-success d-none" role="alert"></div>
+                <div id="failureAlert-@Model.Code" class="alert alert-danger d-none" role="alert"></div>
+                <form asp-action="Create" class="ajax-form" data-alert-container="successAlert-@Model.Code">
                     <!-- Id Number Input -->
                     <div class="form-group">
                         <label for="account_number-@Model.id_number" class="control-label">ID Number</label>
@@ -25,7 +28,6 @@
                     </div>
                     <!-- Submit Button -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <input type="submit" value="Add Account" class="btn btn-primary" />
                     </div>
                 </form>

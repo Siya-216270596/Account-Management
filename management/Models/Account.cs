@@ -5,15 +5,11 @@ namespace management.Models
 {
     public class Account
     {
-        [Required]
         public int code { get; set; }
-        [Required]
-        public string? account_number { get; set; }
         public int PersonCode { get; set; }
-        [Required]
-        public Person? Person { get; set; }
-        [Required]
+        public string? account_number { get; set; } = string.Empty;
+        public decimal outstanding_balance { get; internal set; } = 0;
         public ICollection<Transaction>? Transactions { get; set; }
-        public decimal outstanding_balance { get; internal set; }
+
     }
 }
