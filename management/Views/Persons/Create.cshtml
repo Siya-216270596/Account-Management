@@ -8,24 +8,25 @@
             </div>
             <div class="modal-body">
                 <form asp-action="Create">
+                    <!-- Id Number Input -->
                     <div class="form-group">
-                        <label asp-for="id_number" class="control-label"></label>
-                        <input asp-for="id_number" class="form-control" />
-                        <span asp-validation-for="id_number" class="text-danger"></span>
+                        <label for="account_number-@Model.id_number" class="control-label">ID Number</label>
+                        <input type="text" id="account_number-@Model.id_number" name="id_number" class="form-control" required />
                     </div>
+                    <!-- Name Input -->
                     <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <label for="account_number-@Model.Name" class="control-label">Name</label>
+                        <input type="text" id="account_number-@Model.Name" name="Name" class="form-control" required />
                     </div>
+                    <!-- Surname Input -->
                     <div class="form-group">
-                        <label asp-for="Surname" class="control-label"></label>
-                        <input asp-for="Surname" class="form-control" />
-                        <span asp-validation-for="Surname" class="text-danger"></span>
+                        <label for="account_number-@Model.Surname" class="control-label">Surname</label>
+                        <input type="text" id="account_number-@Model.Surname" name="Surname" class="form-control" required />
                     </div>
+                    <!-- Submit Button -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <input type="submit" value="Add Account" class="btn btn-primary" />
                     </div>
                 </form>
             </div>

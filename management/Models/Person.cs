@@ -13,6 +13,6 @@ namespace management.Models
         public string? Name { get; set; }
 
         public string? Surname { get; set; }
-        public IEnumerable<Account>? Account { get; set; }
+        public List<Account> Account { get; set; } = [];
     }
 }

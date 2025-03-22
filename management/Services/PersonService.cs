@@ -59,6 +59,12 @@ namespace management.Services
 
         public async Task AddPersonAsync(Person person)
         {
+            foreach(var account in person.Account)
+            {
+                await _accountService.AddAccountAsync(account);
+            }
+          
+
             if (await _context.Persons.AnyAsync(p => p.id_number == person.id_number))
                 throw new InvalidOperationException("ID Number already exists.");
             await _context.Persons.AddAsync(person);
@@ -70,8 +76,18 @@ namespace management.Services
             foreach (var account in person.Account)
             {
                 await _accountService.UpdateAccountAsync(account);
-                _context.Persons.Update(person);
             }
+            var existingPerson = await _context.Persons.FirstOrDefaultAsync(p => p.Code == person.Code);
+
+            if (existingPerson == null)
+            {
+                throw new InvalidOperationException("The specified person does not exist.");
+            }
+            // Update all fields apart from the Code
+            existingPerson.id_number = person.id_number;
+            existingPerson.Name = person.Name;
+            existingPerson.Surname = person.Surname;
+
             await _context.SaveChangesAsync();
         }
 

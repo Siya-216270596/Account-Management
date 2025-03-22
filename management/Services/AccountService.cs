@@ -40,10 +40,21 @@ namespace management.Services
 
         public async Task UpdateAccountAsync(Account account)
         {
+            // Fetch the existing account from the database using the Code
+            var existingAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.code == account.code);
 
-            _context.Entry(account).State = EntityState.Modified;
+            if (existingAccount == null)
+            {
+                throw new InvalidOperationException("Account with the specified Code does not exist.");
+            }
+
+            // Update the necessary fields
+            existingAccount.account_number = account.account_number;
+
+            // Save the changes
             await _context.SaveChangesAsync();
         }
+
 
         public async Task CloseAccountAsync(int accountId)
         {
