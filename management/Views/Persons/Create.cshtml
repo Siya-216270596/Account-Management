@@ -1,29 +1,37 @@
 ﻿@model Person
 
-@{
-    ViewData["Title"] = "Create Person";
-}
-
-<h2>Create Person</h2>
-
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="id_number" class="control-label"></label>
-        <input asp-for="id_number" class="form-control" />
-        <span asp-validation-for="id_number" class="text-danger"></span>
+<div class="modal fade" id="Create" tabindex="-1" aria-labelledby="CreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CreateModalLabel">Add New Person's Details</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="successAlert-@Model.Code" class="alert alert-success d-none" role="alert"></div>
+                <div id="failureAlert-@Model.Code" class="alert alert-danger d-none" role="alert"></div>
+                <form asp-action="Create" class="ajax-form" data-alert-container="successAlert-@Model.Code">
+                    <!-- Id Number Input -->
+                    <div class="form-group">
+                        <label for="account_number-@Model.id_number" class="control-label">ID Number</label>
+                        <input type="text" id="account_number-@Model.id_number" name="id_number" class="form-control" required />
+                    </div>
+                    <!-- Name Input -->
+                    <div class="form-group">
+                        <label for="account_number-@Model.Name" class="control-label">Name</label>
+                        <input type="text" id="account_number-@Model.Name" name="Name" class="form-control" required />
+                    </div>
+                    <!-- Surname Input -->
+                    <div class="form-group">
+                        <label for="account_number-@Model.Surname" class="control-label">Surname</label>
+                        <input type="text" id="account_number-@Model.Surname" name="Surname" class="form-control" required />
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="modal-footer">
+                        <input type="submit" value="Add Account" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Surname" class="control-label"></label>
-        <input asp-for="Surname" class="form-control" />
-        <span asp-validation-for="Surname" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+</div>

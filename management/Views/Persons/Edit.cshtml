@@ -1,30 +1,60 @@
 ﻿@model Person
 
-@{
-    ViewData["Title"] = "Edit Person";
-}
+<!-- Modal -->
+<div class="modal fade" id="Edit-@Model.Code" tabindex="-1" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel">@Model.Name @Model.Surname</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
 
-<h2>Edit Person</h2>
+            </div>
+            <div class="modal-body">
+                <div id="successAlert-@Model.Code" class="alert alert-success d-none" role="alert"></div>
+                <div id="failureAlert-@Model.Code" class="alert alert-danger d-none" role="alert"></div>
+                <form asp-action="Edit" method="post" class="ajax-form" data-alert-container="successAlert-@Model.Code">
+                    <input type="hidden" asp-for="Code" />
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Code" />
-    <div class="form-group">
-        <label asp-for="id_number" class="control-label"></label>
-        <input asp-for="id_number" class="form-control" />
-        <span asp-validation-for="id_number" class="text-danger"></span>
+                    <!-- Person Information -->
+                    <div class="form-group text-start">
+                        <label asp-for="id_number" class="control-label">Id Number</label>
+                        <input asp-for="id_number" class="form-control" />
+                        <span asp-validation-for="id_number" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-start">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-start">
+                        <label asp-for="Surname" class="control-label"></label>
+                        <input asp-for="Surname" class="form-control" />
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+
+                    <!-- Account Information -->
+                    @if (Model.Account != null && Model.Account.Any())
+                    {
+                        @for (var i = 0; i < Model.Account.Count(); i++)
+                        {
+                            <!-- Hidden Fields for Non-Editable Account Data -->
+                            <input type="hidden" name="Account[@i].Code" value="@Model.Account[i].code" />
+                            <input type="hidden" name="Account[@i].outstanding_balance" value="@Model.Account[i].outstanding_balance" />
+
+                            <!-- Editable Field for Account Number -->
+                            <div class="form-group text-start">
+                                <label for="Account_@(i)_account_number" class="control-label">Account Number</label>
+                                <input name="Account[@i].account_number" class="form-control" value="@Model.Account[i].account_number" />
+                                <span class="text-danger" asp-validation-for="Account[@i].account_number"></span>
+                            </div>
+                        }
+                    }
+                    <!-- Submit Button -->
+                    <div class="modal-footer">
+                        <input type="submit" value="Update" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Surname" class="control-label"></label>
-        <input asp-for="Surname" class="form-control" />
-        <span asp-validation-for="Surname" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
-</form>
+</div>

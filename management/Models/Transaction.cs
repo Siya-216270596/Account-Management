@@ -11,9 +11,9 @@ namespace management.Models
         [Range(0.01, double.MaxValue)]
         public decimal Amount { get; set; }
         public int AccountCode { get; set; }
-        public Account Account { get; set; }
-        public int personCode { get; set; }
-        public string Description { get; set; }
+        public Account? Account { get; set; }
+        public int PersonCode { get; set; }
+        public string? Description { get; set; }
         public DateTime TransactionDate { get; internal set; }
         public DateTime CaptureDate { get; internal set; }
     }

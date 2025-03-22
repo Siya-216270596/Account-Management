@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Persons List";
+       // Pass a new Person instance to the partial view
+    var newPerson = new Person();
+    @await Html.PartialAsync("Create", newPerson)
 }
 
 <h2>Persons </h2>
@@ -12,17 +15,27 @@
     It’s commonly used in systems like employee databases, customer directories,
     or membership tracking tools</h5>
 <br/>
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Person</a>
-</p>
-
+<div class="d-flex justify-content-between">
+    <div class="col-xs-6 text-left">
+        <a asp-action="Create" class="btn btn-primary" data-toggle="modal" data-target="#Create">
+            Create New Person
+        </a>
+    </div>
+    <div class="col-xs-6 text-right">
+        <form class="d-flex" asp-action="Index" asp-controller="Persons">
+            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" />
+            <input type="submit" value="Create" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
 <table class="table table-striped">
     <thead>
         <tr>
             <th>ID Number</th>
             <th>First Name</th>
             <th>Last Name</th>
-            <th>Actions</th>
+            <th style="text-align: right;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -32,9 +45,16 @@
                 <td>@person.id_number</td>
                 <td>@person.Name</td>
                 <td>@person.Surname</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@person.Code" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@person.Code" class="btn btn-danger">Delete</a>
+                <td style="text-align: right;">
+                    <a asp-action="Delete" asp-route-id="@person.Code" class="btn btn-danger" >Delete</a>
+                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-"+person.Code) data-url="@Url.Action($"Edit/{person.Code}")">
+                       Edit
+                    </button>
+                    @await Html.PartialAsync("Edit",person)
+                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#View-" + person.Code) data-url="@Url.Action($"View/{person.Code}")">
+                        View
+                    </button>
+                    @await Html.PartialAsync("View", person)
                 </td>
             </tr>
         }
@@ -51,3 +71,4 @@
         <a href="?pageNumber=@(ViewBag.PageNumber + 1)">Next</a>
     }
 </div>
+

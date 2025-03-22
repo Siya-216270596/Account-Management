@@ -13,20 +13,19 @@ namespace management.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Transaction>> GetTransactionsByAccountIdAsync(int accountId)
+        public async Task<List<Transaction>> GetTransactionsByAccountIdAsync(int accountId)
         {
             return await _context.Transaction.Where(t => t.AccountCode == accountId).ToListAsync();
         }
 
         public async Task AddTransactionAsync(Transaction transaction)
         {
-            var account = await _context.Account.FindAsync(transaction.AccountCode);
+            var account = await _context.Accounts.FindAsync(transaction.AccountCode);
             if (account == null) throw new Exception("Account not found.");
-            if (account.IsClosed) throw new Exception("Cannot add transactions to a closed account.");
             if (transaction.Amount == 0) throw new Exception("Transaction amount cannot be zero.");
             if (transaction.TransactionDate > DateTime.Now) throw new Exception("Transaction date cannot be in the future.");
 
-            account.OutstandingBalance += transaction.Amount;
+            account.outstanding_balance += transaction.Amount;
             await _context.Transaction.AddAsync(transaction);
             await _context.SaveChangesAsync();
         }
