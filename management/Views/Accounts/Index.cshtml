@@ -1,30 +1,30 @@
-﻿@model List<Person>
+﻿@model List<Account>
 
 @{
-    ViewData["Title"] = "Persons List";
-       // Pass a new Person instance to the partial view
-    var newPerson = new Person();
-    @await Html.PartialAsync("Create", newPerson)
+    ViewData["Title"] = "Account List";
+    // Pass a new Person instance to the partial view
+    var newAccount = new Account();
+    @await Html.PartialAsync("Create", newAccount)
 }
 
-<h2>Persons </h2>
-<br/>
-<h5>Person Management is the process of efficiently handling and organizing individual information.
+<h2>Account </h2>
+<br />
+<h5>
+    Person Management is the process of efficiently handling and organizing individual information.
     It involves tasks such as adding, editing, viewing,
     and deleting records while ensuring data accuracy and accessibility.
     It’s commonly used in systems like employee databases, customer directories,
-    or membership tracking tools</h5>
-<br/>
+    or membership tracking tools
+</h5>
+<br />
 <div class="d-flex justify-content-between">
     <div class="col-xs-6 text-left">
-        <a asp-action="Create" class="btn btn-primary" data-toggle="modal" data-target="#Create">
-            Create New Person
-        </a>
+
     </div>
     <div class="col-xs-6 text-right">
-        <form class="d-flex" asp-action="Index" asp-controller="Persons">
-            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" class="form-control me-2" />
-            <input type="submit" value="Search" class="btn btn-primary me-1" />
+        <form class="d-flex" asp-action="Index" asp-controller="Accounts">
+            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" />
+            <input type="submit" value="Create" class="btn btn-primary" />
             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
         </form>
     </div>
@@ -32,29 +32,29 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>ID Number</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Account Number</th>
+            <th>Outstanding Balance</th>
+            <th>Person Id</th>
             <th style="text-align: right;">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var person in Model)
+        @foreach (var account in Model)
         {
             <tr>
-                <td>@person.id_number</td>
-                <td>@person.Name</td>
-                <td>@person.Surname</td>
+                <td>@account.account_number</td>
+                <td>@account.outstanding_balance</td>
+                <td>@account.PersonCode</td>
                 <td style="text-align: right;">
-                    <a asp-action="Delete" asp-route-id="@person.Code" class="btn btn-danger" >Delete</a>
-                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-"+person.Code) data-url="@Url.Action($"Edit/{person.Code}")">
-                       Edit
+                    <a asp-action="Delete" asp-route-id="@account.code" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-" + account.code) data-url="@Url.Action($"Edit/{account.code}")">
+                        Edit
                     </button>
-                    @await Html.PartialAsync("Edit",person)
-                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#View-" + person.Code) data-url="@Url.Action($"View/{person.Code}")">
+                    @await Html.PartialAsync("Edit", account)
+                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#View-" + account.code) data-url="@Url.Action($"View/{account.code}")">
                         View
                     </button>
-                    @await Html.PartialAsync("View", person)
+                    @await Html.PartialAsync("View", account)
                 </td>
             </tr>
         }

@@ -1,0 +1,86 @@
+﻿@model List<Transaction>
+
+@{
+    ViewData["Title"] = "transaction List";
+    // Pass a new Person instance to the partial view
+}
+
+<h2>transaction </h2>
+<br />
+<h5>
+    Person Management is the process of efficiently handling and organizing individual information.
+    It involves tasks such as adding, editing, viewing,
+    and deleting records while ensuring data accuracy and accessibility.
+    It’s commonly used in systems like employee databases, customer directories,
+    or membership tracking tools
+</h5>
+<br />
+<div class="d-flex justify-content-between">
+    <div class="col-xs-6 text-left">
+    </div>
+    <div class="col-xs-6 text-right">
+        <form class="d-flex" asp-action="Index" asp-controller="Transactions">
+            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" />
+            <input type="submit" value="Create" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Capture Date</th>
+            <th>Transaction Date</th>
+            <th>AccountId</th>
+            <th style="text-align: right;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model)
+        {
+            <tr>
+                <td>@transaction.description</td>
+                <td>@transaction.amount</td>
+                <td>@transaction.capture_date</td>
+                <td>@transaction.transaction_date</td>
+                <td>@transaction.account_code</td>
+                <td style="text-align: right;">
+                    <a asp-action="Delete" asp-route-id="@transaction.code" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-" + transaction.code) data-url="@Url.Action($"Edit/{transaction.code}")">
+                        Edit
+                    </button>
+                    @await Html.PartialAsync("Edit", transaction)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <!-- Previous Button -->
+        <li class="page-item @(ViewBag.PageNumber == 1 ? "disabled" : "")">
+            <a class="page-link" href="?pageNumber=@(ViewBag.PageNumber - 1)">Previous</a>
+        </li>
+
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= Math.Ceiling((double)ViewBag.TotalItems / (double)ViewBag.PageSize); i++)
+        {
+            <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                <a class="page-link" href="?pageNumber=@i">@i</a>
+            </li>
+        }
+
+
+        <!-- Next Button -->
+        <li class="page-item @((ViewBag.PageNumber * ViewBag.PageSize >= ViewBag.TotalItems) ? "disabled" : "")">
+            <a class="page-link" href="?pageNumber=@(ViewBag.PageNumber + 1)">Next</a>
+        </li>
+    </ul>
+</nav>
+
+
+
+
+

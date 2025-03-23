@@ -18,19 +18,20 @@ namespace management.Controllers
             _accountService = accountService;
         }
 
-        public async Task<IActionResult> Index(int pageNumber, int pageSize, string SearchString)
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string? SearchString = null)
         {
-            pageSize = 1000;
-            pageNumber = 1;
-            // Fetch all persons
+            // Fetch all accounts asynchronously
             var persons = await _personService.GetAllPersonsAsync();
 
-            
-
-            if (!String.IsNullOrEmpty(SearchString))
+            // Filter by search string if provided
+            if (!string.IsNullOrEmpty(SearchString))
             {
                 persons = persons.Where(x => x.id_number.Contains(SearchString)).ToList();
             }
+
+            // Update total items after filtering
+            ViewBag.TotalItems = persons.Count();
+
             // Apply pagination
             var paginatedPersons = persons
                 .Skip((pageNumber - 1) * pageSize)
@@ -40,7 +41,6 @@ namespace management.Controllers
             // Pass pagination data to the view
             ViewBag.PageNumber = pageNumber;
             ViewBag.PageSize = pageSize;
-            ViewBag.TotalItems = persons.Count();
 
             return View(paginatedPersons);
         }
@@ -110,9 +110,9 @@ namespace management.Controllers
             }
             catch (Exception)
             {
-    // Handle other exceptions
-    return Json(new { success = false, message = "An unexpected error occurred." });
-}
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
         }
 
         public async Task<IActionResult> Delete(int id)
