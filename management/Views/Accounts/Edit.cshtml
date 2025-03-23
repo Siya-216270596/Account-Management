@@ -1,0 +1,56 @@
+﻿@model Account
+
+<!-- Modal -->
+<div class="modal fade" id="Edit-@Model.code" tabindex="-1" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel">Acc No: @Model.account_number</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <div id="successAlert-@Model.code" class="alert alert-success d-none" role="alert"></div>
+                <div id="failureAlert-@Model.code" class="alert alert-danger d-none" role="alert"></div>
+                <form asp-action="Edit" method="post" class="ajax-form" data-alert-container="successAlert-@Model.code">
+                    <input type="hidden" asp-for="code" />
+
+                    <!-- Account Information -->
+
+                    <div class="form-group text-start">
+                        <label asp-for="outstanding_balance" class="control-label"></label>
+                        <input asp-for="outstanding_balance" class="form-control" />
+                        <span asp-validation-for="outstanding_balance" class="text-danger"></span>
+                    </div>
+
+                    <!-- Account Information -->
+                    @if (Model.Transaction != null && Model.Transaction.Any())
+                    {
+                        @for (var i = 0; i < Model.Transaction.Count(); i++)
+                        {
+                            <!-- Hidden Fields for Non-Editable Account Data -->
+                            <input type="hidden" name="Transaction[@i].code" value="@Model.Transaction[i].code" />
+                            <input type="hidden" name="Transaction[@i].description" value="@Model.Transaction[i].code" />
+
+                            <!-- Editable Field for Transaction Number -->
+                            <div class="form-group text-start">
+                                <label for="Transaction@(i).description" class="control-label">Description</label>
+                                <input name="Transaction[@i].description" class="form-control" value="@Model.Transaction[i].description" />
+                                <span class="text-danger" asp-validation-for="Transaction[@i].description"></span>
+                            </div>
+                            <div class="form-group text-start">
+                                <label for="Transaction@(i).amount" class="control-label">Amount</label>
+                                <input name="Transaction[@i].amount" class="form-control" value="@Model.Transaction[i].amount" />
+                                <span class="text-danger" asp-validation-for="Transaction[@i].amount"></span>
+                            </div>
+                        }
+                    }
+                    <!-- Submit Button -->
+                    <div class="modal-footer">
+                        <input type="submit" value="Update" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

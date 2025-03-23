@@ -6,5 +6,6 @@ namespace management.Interface
     {
         Task<List<Transaction>> GetTransactionsByAccountIdAsync(int accountId);
         Task AddTransactionAsync(Transaction transaction);
+        Task<List<Transaction>> GetAllTransactionsAsync();
     }
 }

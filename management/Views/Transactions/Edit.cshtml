@@ -1,0 +1,33 @@
+﻿@model Transaction
+
+<!-- Modal -->
+<div class="modal fade" id="Edit-@Model.code" tabindex="-1" aria-labelledby="EditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditModalLabel">Acc No: @Model.code</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <div id="successAlert-@Model.code" class="alert alert-success d-none" role="alert"></div>
+                <div id="failureAlert-@Model.code" class="alert alert-danger d-none" role="alert"></div>
+                <form asp-action="Edit" method="post" class="ajax-form" data-alert-container="successAlert-@Model.code">
+                    <input type="hidden" asp-for="code" />
+
+                    <!-- Account Information -->
+
+                    <div class="form-group text-start">
+                        <label asp-for="description" class="control-label"></label>
+                        <input asp-for="description" class="form-control" />
+                        <span asp-validation-for="description" class="text-danger"></span>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="modal-footer">
+                        <input type="submit" value="Update" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,7 @@ namespace management.Models
         public int PersonCode { get; set; }
         public string? account_number { get; set; } = string.Empty;
         public decimal outstanding_balance { get; internal set; } = 0;
-        public ICollection<Transaction>? Transactions { get; set; }
+        public List<Transaction> Transaction { get; set; } = [];
 
     }
 }
