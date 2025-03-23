@@ -1,0 +1,15 @@
+﻿@{
+    var returnUrl = ViewData["ReturnUrl"] as string;
+    var error = ViewData["Error"] as string;
+}
+
+<h2>Login</h2>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<form method="get" action="/auth/login-google">
+    <button type="submit">Login with Google</button>
+</form>

@@ -1,7 +1,6 @@
 ﻿using management.Interface;
 using management.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace management.Services
 {

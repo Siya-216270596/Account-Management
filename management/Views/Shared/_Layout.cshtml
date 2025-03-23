@@ -32,6 +32,13 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Contact" asp-action="Contact">Contact</a>
                         </li>
+                        <!-- Logout button -->
+                        <li class="nav-item">
+                            <form action="@Url.Action("Logout", "Auth")" method="post" class="m-0">
+                                @Html.AntiForgeryToken()  <!-- Anti-forgery token -->
+                                <button type="submit" class="nav-link btn btn-link">Logout</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
