@@ -9,5 +9,6 @@ namespace management.Interface
         Task UpdatePersonAsync(Person person);
         Task DeletePersonAsync(int id);
         Task<IEnumerable<Person>> GetAllPersonsAsync();
+        protected bool ValidateSouthAfricanID(string idNumber);
     }
 }

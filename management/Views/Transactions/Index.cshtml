@@ -5,7 +5,7 @@
     // Pass a new Person instance to the partial view
 }
 
-<h2>transaction </h2>
+<h2>Transaction </h2>
 <br />
 <h5>
     Person Management is the process of efficiently handling and organizing individual information.
@@ -17,13 +17,6 @@
 <br />
 <div class="d-flex justify-content-between">
     <div class="col-xs-6 text-left">
-    </div>
-    <div class="col-xs-6 text-right">
-        <form class="d-flex" asp-action="Index" asp-controller="Transactions">
-            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" />
-            <input type="submit" value="Create" class="btn btn-primary" />
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        </form>
     </div>
 </div>
 <table class="table table-striped">
@@ -47,7 +40,6 @@
                 <td>@transaction.transaction_date</td>
                 <td>@transaction.account_code</td>
                 <td style="text-align: right;">
-                    <a asp-action="Delete" asp-route-id="@transaction.code" class="btn btn-danger">Delete</a>
                     <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-" + transaction.code) data-url="@Url.Action($"Edit/{transaction.code}")">
                         Edit
                     </button>

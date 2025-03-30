@@ -1,5 +1,7 @@
 ﻿using management.Interface;
+using management.Models;
 using management.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace management.Controllers
@@ -13,6 +15,7 @@ namespace management.Controllers
             _transactionService = transactionService;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
         {
             // Fetch all accounts asynchronously
@@ -34,6 +37,28 @@ namespace management.Controllers
             ViewBag.PageSize = pageSize;
 
             return View(paginatedPersons);
+        }
+        public async Task<IActionResult> Edit(Transaction transaction)
+        {
+            try
+            {
+                await _transactionService.UpdateTransactionAsync(transaction);
+                return Json(new { success = true, message = "Upadeted successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
         }
 
     }

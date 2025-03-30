@@ -1,7 +1,10 @@
 ﻿using management.Interface;
 using management.Models;
 using management.Models.Response;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using System.Data;
 
 namespace management.Services
 {
@@ -13,17 +16,17 @@ namespace management.Services
         public AccountService(AppDbContext context, ITransactionService transactionService)
         {
             _context = context;
-            _transactionService = transactionService;
+            _transactionService = transactionService;       
         }
-        public async Task<IEnumerable<Account>> GetAllPersonsAsync()
+        public async Task<IEnumerable<Account>> GetAllPersonsAccountAsync()
         {
             try
             {
                 // Fetch all persons from the database
-                var accounts = await _context.Accounts.ToListAsync();
+                var accounts = await _context.Accounts.Where(a => !a.account_number.StartsWith("999-")).ToListAsync();
 
                 // Gather all person codes
-                var accountCodes = accounts.Select(a => a.code).ToList();
+                var account_codes = accounts.Select(a => a.code).ToList();
 
                 // Fetch all accounts for the persons in a single query
                 var transactions = await _transactionService.GetAllTransactionsAsync();
@@ -42,15 +45,6 @@ namespace management.Services
 
                 throw;
             }
-        }
-        public async Task<PersonAccountsResponse> GetAllAccountsAsync()
-        {
-            var accounts = await _context.Accounts.ToListAsync();
-            return new PersonAccountsResponse()
-            {
-                Accounts = accounts
-            };
-
         }
         public async Task<PersonAccountsResponse> GetAccountsByPersonIdAsync(int personId)
         {
@@ -71,8 +65,19 @@ namespace management.Services
         {
             if (await _context.Accounts.AnyAsync(a => a.account_number == account.account_number))
                 throw new InvalidOperationException("Duplicate account number is not allowed.");
+            // Generate a random number between 1 and 9999, padded to 4 digits
+            var random = new Random();
+            var randomNumber = random.Next(1, 10000).ToString("D10");
+            account.account_number = randomNumber;
             await _context.Accounts.AddAsync(account);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task GenerateAccountNumber()
+        {
+            // Generate a random number between 1 and 9999, padded to 4 digits
+            var random = new Random();
+            var randomNumber = random.Next(1, 10000).ToString("D10");
         }
 
         public async Task UpdateAccountAsync(Account account)
@@ -84,9 +89,7 @@ namespace management.Services
             {
                 throw new InvalidOperationException("Account with the specified Code does not exist.");
             }
-
-            // Update the necessary fields
-            existingAccount.account_number = account.account_number;
+                existingAccount.account_number = account.account_number;
 
             // Save the changes
             await _context.SaveChangesAsync();
@@ -95,11 +98,17 @@ namespace management.Services
 
         public async Task CloseAccountAsync(int accountId)
         {
-            var account = await _context.Accounts.FindAsync(accountId);
-            if (account == null) throw new Exception("Account not found.");
-            if (account.outstanding_balance != 0) throw new Exception("Cannot close an account with a nonzero balance.");
-
-            await _context.SaveChangesAsync();
+            var acc = await GetAccountByIdAsync(accountId);
+            var transactions = await _transactionService.GetTransactionsByAccountIdAsync(accountId);
+            var transaction = transactions.Where(t => t.account_code == accountId).ToList();
+            if (acc?.outstanding_balance == 0 && acc.Transaction?.Count() >= 0)
+            {
+                acc.account_number ="999-"+ acc.account_number;
+                await _context.SaveChangesAsync();
+            }
+            if (acc?.outstanding_balance > 0) throw new InvalidOperationException(" Account can not be closed with an outshanding Balance.");
+            if (acc == null) throw new InvalidOperationException("Account not found.");
         }
+
     }
 }

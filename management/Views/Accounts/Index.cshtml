@@ -46,12 +46,15 @@
                 <td>@account.outstanding_balance</td>
                 <td>@account.PersonCode</td>
                 <td style="text-align: right;">
-                    <a asp-action="Delete" asp-route-id="@account.code" class="btn btn-danger">Delete</a>
+                    <button class="btn  btn-danger" data-toggle="modal" data-target=@("#Delete-" + account.code) data-url="@Url.Action($"Delete/{account.code}")">
+                        Delete
+                    </button>
+                    @await Html.PartialAsync("Delete", account)
                     <button class="btn btn-primary" data-toggle="modal" data-target=@("#Edit-" + account.code) data-url="@Url.Action($"Edit/{account.code}")">
                         Edit
                     </button>
                     @await Html.PartialAsync("Edit", account)
-                    <button class="btn btn-primary" data-toggle="modal" data-target=@("#View-" + account.code) data-url="@Url.Action($"View/{account.code}")">
+                    <button class="btn btn-outline-success" data-toggle="modal" data-target=@("#View-" + account.code) data-url="@Url.Action($"View/{account.code}")">
                         View
                     </button>
                     @await Html.PartialAsync("View", account)

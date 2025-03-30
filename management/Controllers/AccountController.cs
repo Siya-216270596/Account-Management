@@ -1,103 +1,113 @@
-﻿using management.Models;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
+﻿using management.Interface;
+using management.Models;
+using management.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace management.Controllers
 {
-    [Route("auth")]
-    public class AuthController : Controller
+    public class AccountsController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private ILogger<AuthController> _logger;
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AuthController> logger)
+        private readonly IAccountService _accountService;
+        private readonly ITransactionService _transactionService;
+
+
+        public AccountsController(IAccountService accountService, ITransactionService transactionService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
+            _accountService = accountService;
+            _transactionService = transactionService;
         }
-
-        [HttpGet("login")]
-        public IActionResult Login(string? returnUrl = null)
+        [Authorize]
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string? SearchString = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
+            // Fetch all accounts asynchronously
+            var account = await _accountService.GetAllPersonsAccountAsync();
 
-        // Redirect user to Google authentication page
-        [HttpGet("login-google")]
-        public IActionResult LoginWithGoogle()
-        {
-            var redirectUrl = Url.Action("GoogleResponse", "Auth", null, Request.Scheme);
-            _logger.LogInformation("Redirect URI: {RedirectUri}", redirectUrl);  // Log the redirect URI
-
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme, redirectUrl);
-            var challengeUrl = Url.Action("Challenge", "Auth", properties);  // Log the full challenge URL
-            _logger.LogInformation("Challenge URL: {ChallengeUrl}", challengeUrl);
-
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-        }
-
-        // Handle Google authentication response
-        [HttpGet("google-response")]
-        public async Task<IActionResult> GoogleResponse()
-        {
-            // Retrieve the external login info from Google
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
+            // Filter by search string if provided
+            if (!string.IsNullOrEmpty(SearchString))
             {
-                // Handle the case where external login info is not available
-                return RedirectToAction("LoginFailed");
+                account = account.Where(x => x.account_number.Contains(SearchString)).ToList();
             }
 
-            // Extract the email from the external login info
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            // Update total items after filtering
+            ViewBag.TotalItems = account.Count();
 
-            // Check if the user already exists in the database
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            // Apply pagination
+            var paginatedPersons = account
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Pass pagination data to the view
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.PageSize = pageSize;
+
+            return View(paginatedPersons);
+        }
+
+        public async Task<IActionResult> Edit(Account account)
+        {
+            try
             {
-                // Create a new user if one doesn't exist
-                user = new ApplicationUser
+                await _accountService.UpdateAccountAsync(account);
+                return Ok(new { success = true, message = "Upadeted successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Ok(new
                 {
-                    UserName = email?.Split('@')[0], // Use email as the username
-                    Email = email,
-                    EmailConfirmed = true // Mark email as confirmed since it's verified by Google
-                };
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Ok(new { success = false, message = "An unexpected error occurred." });
+            }
+        }
 
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    // Handle the case where user creation fails
-                    return BadRequest("User creation failed: " + string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount(Transaction transaction)
+        {
+            try
+            {
+                await _transactionService.AddTransactionAsync(transaction);
+                return Json(new { success = true, message = "New Account added successfully" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
+        }
 
-                // Add the external login info to the user
-                await _userManager.AddLoginAsync(user, info);
+        public async Task<IActionResult> Delete(Account account)
+        {
+            try
+            {
+                await _accountService.CloseAccountAsync(account.code);
+                return Json(new { success = true, message = "Successful Closed" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
             }
 
-            // Sign in the user
-            await _signInManager.SignInAsync(user, isPersistent: false);
-
-            // Redirect to the home page or another desired page
-            return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Auth");  // Redirect to AuthController's Login action
-        }
-
-        // Handle failed login attempt
-        [HttpGet("loginfailed")]
-        public IActionResult LoginFailed()
-        {
-            ViewData["Error"] = "Google login failed. Please try again.";
-            return View("Login");  // Ensure you have a Login view to display the error message
-        }
     }
 }
