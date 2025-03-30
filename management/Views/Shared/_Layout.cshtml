@@ -9,14 +9,16 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Account Management</a>
+                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">Account Management</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Persons" asp-action="Index">Persons</a>
                         </li>
@@ -30,15 +32,28 @@
                             <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Contact" asp-action="Contact">Contact</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
                         </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <!-- Login button -->
+                        <li class="nav-item">
+                            <form method="get" action="/auth/login-google" class="m-0">
+                                <button type="submit" class="nav-link btn btn-primary text-white px-3">Login</button>
+                            </form>
+                        </li>
+                    }else{
                         <!-- Logout button -->
                         <li class="nav-item">
                             <form action="@Url.Action("Logout", "Auth")" method="post" class="m-0">
-                                @Html.AntiForgeryToken()  <!-- Anti-forgery token -->
-                                <button type="submit" class="nav-link btn btn-link">Logout</button>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nav-link btn btn-link text-danger">Logout</button>
                             </form>
                         </li>
+                    }
                     </ul>
                 </div>
             </div>
@@ -49,7 +64,6 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2023 - Account Management System
@@ -58,9 +72,9 @@
     @RenderBody()
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/person.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

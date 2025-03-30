@@ -4,6 +4,7 @@ using management.Models;
 using management;
 using management.Interface;
 using management.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.MaxAge = TimeSpan.FromDays(14); // Set cookie expiration time to 14 days
 });
 
+builder.Services.AddControllers(options =>
+{
+    options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+});
 // Add services to the container for MVC
 builder.Services.AddControllersWithViews();
 
@@ -48,6 +53,16 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();  // Security feature for HTTPS redirection in production
 }
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "POST" && context.Request.Form["_method"] == "DELETE")
+    {
+        context.Request.Method = "DELETE";
+    }
+        await next();
+});
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

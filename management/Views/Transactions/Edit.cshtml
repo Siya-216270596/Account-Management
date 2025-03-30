@@ -16,11 +16,20 @@
                     <input type="hidden" asp-for="code" />
 
                     <!-- Account Information -->
-
+                    <input type="hidden" id="capture_date" name="capture_date" value="@Model.capture_date"/>
+                    <input type="hidden" id="account_code" name="account_code" value="@Model.account_code"/>
                     <div class="form-group text-start">
-                        <label asp-for="description" class="control-label"></label>
-                        <input asp-for="description" class="form-control" />
-                        <span asp-validation-for="description" class="text-danger"></span>
+                    <label asp-for="description" class="control-label"></label>
+                    <select class="form-select" id="description" name="description" required>
+                        <option value="">Select an option...</option>
+                        <option id="description" value="Debit">Debit</option>
+                        <option id="description" value="Credit">Credit</option>
+                    </select>
+                    </div>
+                    <div class="form-group text-start">
+                        <label asp-for="amount" class="control-label"></label>
+                        <input asp-for="amount" class="form-control" />
+                        <span asp-validation-for="amount" class="text-danger"></span>
                     </div>
                     <!-- Submit Button -->
                     <div class="modal-footer">

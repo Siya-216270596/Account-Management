@@ -21,6 +21,9 @@ namespace management
             modelBuilder.Entity<Account>().HasKey(a => a.code);
             modelBuilder.Entity<Person>().HasKey(p => p.Code);
             modelBuilder.Entity<Transaction>().HasKey(t => t.code);
+            modelBuilder.Entity<Transaction>()
+            .Property(t => t.transaction_date)
+            .HasColumnType("datetime");
             // Explicitly define primary keys for Identity tables
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(e => new { e.UserId, e.RoleId });
             modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(e => new { e.LoginProvider, e.ProviderKey }); // Fix for IdentityUserLogin

@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Optional: Links to your main layout if applicable
+}
+
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="text-center text-primary mb-4">Contact Us</h1>
+            <p class="text-center text-muted mb-4">
+                We'd love to hear from you! Feel free to reach out to us for any inquiries or support.
+            </p>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <p class="text-muted">Or contact us directly:</p>
+                <p><strong>Email:</strong> support@example.com</p>
+                <p><strong>Phone:</strong> +123 456 7890</p>
+                <p><strong>Address:</strong> 123 Main Street, City, Country</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+
+    .btn-primary {
+        background-color: #4285F4; /* Google's blue */
+        border-color: #4285F4;
+    }
+
+        .btn-primary:hover {
+            background-color: #357ae8;
+            border-color: #357ae8;
+        }
+
+    p.text-muted {
+        line-height: 1.6;
+    }
+</style>

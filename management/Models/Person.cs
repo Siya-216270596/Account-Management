@@ -8,6 +8,7 @@ namespace management.Models
         [Required]
         public int Code { get; set; }
 
+        [StringLength(13, ErrorMessage = "Id length can't be more than 13.")]
         public string? id_number { get; set; }
 
         public string? Name { get; set; }

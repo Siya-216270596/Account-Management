@@ -10,7 +10,8 @@ namespace management.Interface
         Task AddAccountAsync(Account account);
         Task UpdateAccountAsync(Account account);
         Task CloseAccountAsync(int accountId);
-        Task<IEnumerable<Account>> GetAllPersonsAsync();
+        Task<IEnumerable<Account>> GetAllPersonsAccountAsync();
+        Task GenerateAccountNumber();
     }
 
 }

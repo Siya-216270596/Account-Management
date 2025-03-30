@@ -40,6 +40,18 @@ $(document).on('submit', '.ajax-form', function (e) {
                     alert('An error occurred!'); // Fallback
                 }
             }
+            // If successful, hide the modal and refresh the page after 10 seconds
+            if (response.success) {
+                $('#DeleteModal').modal('hide'); // Replace '#myModal' with your modal ID
+                $('#deleteButton').hide();
+
+
+                // Wait for 10 seconds (10,000 milliseconds) before refreshing the page
+                setTimeout(function () {
+                    location.reload(); // Refresh the page
+                }, 2900);
+            }
+
         },
         error: function () {
             // General server error alert

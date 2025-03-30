@@ -2,6 +2,7 @@
 using management.Models;
 using management.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace management.Controllers
 {
@@ -18,6 +19,7 @@ namespace management.Controllers
             _accountService = accountService;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10, string? SearchString = null)
         {
             // Fetch all accounts asynchronously
@@ -49,8 +51,8 @@ namespace management.Controllers
         public async Task<IActionResult> Create(Person person)
         {
             try
-            { 
-            await _personService.AddPersonAsync(person);
+            {
+                await _personService.AddPersonAsync(person);
                 return Json(new { success = true, message="New Person added successfully" });
             }
             catch (InvalidOperationException ex)
@@ -86,14 +88,6 @@ namespace management.Controllers
             }
         }
 
-        public async Task<IActionResult> Edit(int id)
-        {
-
-            var person = await _personService.GetPersonByIdAsync(id); 
-            if (person == null) return NotFound();
-            return View(person);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Edit(Person person)
         {
@@ -105,8 +99,7 @@ namespace management.Controllers
             catch (InvalidOperationException ex)
             {
                 // Return the exception message for duplicate account number
-                return Json(new { success = false, message = ex.Message
-    });
+                return Json(new { success = false, message = ex.Message});
             }
             catch (Exception)
             {
@@ -115,10 +108,26 @@ namespace management.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Person person)
         {
-            await _personService.DeletePersonAsync(id);
-            return RedirectToAction(nameof(Index));
+            try 
+            { 
+            await _personService.DeletePersonAsync(person.Code);
+            return Json(new { success = true, message = "Person Deleted successfully" });
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Return the exception message for duplicate account number
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions
+                return Json(new { success = false, message = "An unexpected error occurred." });
+            }
+
         }
     }
 }

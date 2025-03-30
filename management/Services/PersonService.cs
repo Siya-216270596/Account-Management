@@ -1,6 +1,11 @@
 ﻿using management.Interface;
 using management.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using System.Globalization;
+using System.Linq;
+using System.Web.Helpers;
 
 namespace management.Services
 {
@@ -58,7 +63,12 @@ namespace management.Services
 
         public async Task AddPersonAsync(Person person)
         {
-            foreach(var account in person.Account)
+            if (!ValidateSouthAfricanID(person.id_number))
+            {
+                throw new InvalidOperationException("Invalid South African ID number.");
+            }
+
+            foreach (var account in person.Account)
             {
                 await _accountService.AddAccountAsync(account);
             }
@@ -68,6 +78,42 @@ namespace management.Services
                 throw new InvalidOperationException("ID Number already exists.");
             await _context.Persons.AddAsync(person);
             await _context.SaveChangesAsync();
+        }
+
+        public bool ValidateSouthAfricanID(string idNumber)
+        {
+            if (idNumber.Length != 13 || !idNumber.All(char.IsDigit))
+                throw new InvalidOperationException("ID Number must have 13 degits");
+
+
+            string birthDate = idNumber.Substring(0, 6);
+            if (!DateTime.TryParseExact(birthDate, "yyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _)) 
+                throw new InvalidOperationException("DOB is incorrect format");
+
+
+            int checksum = CalculateLuhnChecksum(idNumber.Substring(0, 12));
+            return checksum == int.Parse(idNumber[12].ToString());
+        }
+
+        private int CalculateLuhnChecksum(string number)
+        {
+            int sum = 0;
+            bool alternate = false;
+
+            for (int i = number.Length - 1; i >= 0; i--)
+            {
+                int n = int.Parse(number[i].ToString());
+                if (alternate)
+                {
+                    n *= 2;
+                    if (n > 9)
+                        n -= 9;
+                }
+                sum += n;
+                alternate = !alternate;
+            }
+
+            return (sum % 10);
         }
 
         public async Task UpdatePersonAsync(Person person)
@@ -92,11 +138,16 @@ namespace management.Services
 
         public async Task DeletePersonAsync(int id)
         {
-            var person = await _context.Persons.FindAsync(id);
-            if (person is not null)
-            {
-                await _context.SaveChangesAsync();
-            }
+            var deleteTransaction = await _transactionService.GetTransactionsByAccountIdAsync(id);
+            var tran = deleteTransaction.FirstOrDefault(a => a.code == id);
+            var deleteAccount = await _accountService.GetAllPersonsAccountAsync();
+            var personacc = deleteAccount.Where(a => a.PersonCode == id && a.outstanding_balance > 0.0000M).ToList();
+            var closedAccount =  deleteAccount.Where(a => a.account_number.StartsWith("999-"));
+
+            if (personacc.Count() > 0) throw new InvalidOperationException("Can not delete a person with an OutStanding Balance.");
+            if (closedAccount.Count() == 0) throw new InvalidOperationException("Can not delete a person with an open account.");
+
+                await _context.Database.ExecuteSqlRawAsync("EXEC DeletePersonByCode @code = {0}", id);
         }
     }
 }
