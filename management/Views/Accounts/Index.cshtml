@@ -23,9 +23,9 @@
     </div>
     <div class="col-xs-6 text-right">
         <form class="d-flex" asp-action="Index" asp-controller="Accounts">
-            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" />
-            <input type="submit" value="Create" class="btn btn-primary" />
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <input name="SearchString" type="search" placeholder="Search" aria-label="Search" class="btn btn-light me-1" />
+            <input type="submit" value="Search" class="btn btn-primary me-1" />
+            <a asp-action="Index" class="btn btn-secondary me-1">Back to List</a>
         </form>
     </div>
 </div>
@@ -43,7 +43,7 @@
         {
             <tr>
                 <td>@account.account_number</td>
-                <td>@account.outstanding_balance</td>
+                <td>R @account.outstanding_balance</td>
                 <td>@account.PersonCode</td>
                 <td style="text-align: right;">
                     <button class="btn  btn-danger" data-toggle="modal" data-target=@("#Delete-" + account.code) data-url="@Url.Action($"Delete/{account.code}")">

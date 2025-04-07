@@ -77,18 +77,17 @@ namespace management.Services
 
             // Update the necessary fields
             Account.outstanding_balance += transaction.amount;
-            transaction.account_code = Account.code;
 
                 var updatedAccount = _context.Accounts.Update(Account); // Mark the entity as updated
             if(updatedAccount is not null && updatedAccount is not null)
             {
                 var parameters = new[]
-           {
+                {
 
-                            new SqlParameter("@account_code", transaction.account_code),
-                            new SqlParameter("@amount", transaction.amount),
-                            new SqlParameter("@description", transaction.description),
-                        };
+                    new SqlParameter("@account_code", transaction.code),
+                    new SqlParameter("@amount", transaction.amount),
+                    new SqlParameter("@description", transaction.description),
+                };
 
                 // Call the stored procedure using _context
                 await _context.Database.ExecuteSqlRawAsync("EXEC UpdateTransaction  @account_code, @amount, @description", parameters);

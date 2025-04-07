@@ -39,6 +39,9 @@
                     <ul class="navbar-nav">
                     @if (!User.Identity.IsAuthenticated)
                     {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home">Please login</a>
+                            </li>
                         <!-- Login button -->
                         <li class="nav-item">
                             <form method="get" action="/auth/login-google" class="m-0">
@@ -47,6 +50,9 @@
                         </li>
                     }else{
                         <!-- Logout button -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" >@User.Identity.Name</a>
+                            </li>
                         <li class="nav-item">
                             <form action="@Url.Action("Logout", "Auth")" method="post" class="m-0">
                                 @Html.AntiForgeryToken()
@@ -60,6 +66,7 @@
         </nav>
     </header>
     <div class="container">
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

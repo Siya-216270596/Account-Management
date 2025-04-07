@@ -162,20 +162,18 @@ namespace management.Migrations
                 {
                     code = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     account_code = table.Column<int>(type: "int", nullable: false),
                     description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     transaction_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    capture_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Accountcode = table.Column<int>(type: "int", nullable: true)
+                    capture_date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transaction", x => x.code);
                     table.ForeignKey(
-                        name: "FK_Transaction_Accounts_Accountcode",
-                        column: x => x.Accountcode,
+                        name: "FK_Transaction_Accounts_account_code",
+                        column: x => x.account_code,
                         principalTable: "Accounts",
                         principalColumn: "code");
                 });
@@ -193,9 +191,9 @@ namespace management.Migrations
                 filter: "[id_number] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transaction_Accountcode",
+                name: "IX_Transaction_account_code",
                 table: "Transaction",
-                column: "Accountcode");
+                column: "account_code");
         }
 
         /// <inheritdoc />

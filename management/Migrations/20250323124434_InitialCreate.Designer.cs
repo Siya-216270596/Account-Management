@@ -249,7 +249,7 @@ namespace management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("code"));
 
-                    b.Property<int?>("Accountcode")
+                    b.Property<int?>("account_code")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
@@ -272,7 +272,7 @@ namespace management.Migrations
 
                     b.HasKey("code");
 
-                    b.HasIndex("Accountcode");
+                    b.HasIndex("account_code");
 
                     b.ToTable("Transaction");
                 });
@@ -290,7 +290,7 @@ namespace management.Migrations
                 {
                     b.HasOne("management.Models.Account", null)
                         .WithMany("Transaction")
-                        .HasForeignKey("Accountcode");
+                        .HasForeignKey("account_code");
                 });
 
             modelBuilder.Entity("management.Models.Account", b =>
